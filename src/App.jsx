@@ -350,6 +350,7 @@ export default function App() {
       fontFamily: "'Noto Sans JP', sans-serif", padding: "24px 16px 40px" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
+        *,body{margin:0;padding:0;box-sizing:border-box}
         ::-webkit-scrollbar{width:4px}
         ::-webkit-scrollbar-track{background:#0D1520}
         ::-webkit-scrollbar-thumb{background:#1F2937;border-radius:4px}
