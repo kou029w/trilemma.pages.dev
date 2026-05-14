@@ -435,14 +435,14 @@ export default function App() {
         })}
       </div>
 
+      <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
       <p style={{ textAlign: "center", color: "#1E3050", fontSize: "11px",
         margin: "0 0 16px", letterSpacing: "0.08em" }}>
         ● ドットまたはカードをホバー・クリック → 詳細表示（クリックで固定）
       </p>
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: "24px",
-        justifyContent: "center", alignItems: "flex-start",
-        maxWidth: "1100px", margin: "0 auto" }}>
+        justifyContent: "center", alignItems: "flex-start" }}>
 
         <div style={{ flex: "0 0 auto", width: "min(100%, 520px)" }}>
           <TriangleViz
@@ -466,6 +466,7 @@ export default function App() {
             />
           ))}
         </div>
+      </div>
       </div>
     </div>
   );
