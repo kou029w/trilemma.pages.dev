@@ -271,14 +271,20 @@ function TriangleViz({ trilemmas, hovered, setHovered }) {
           const isHov = hovered === t.id;
           const isDim = hovered !== null && !isHov;
           return (
-            <circle key={t.id} cx={cx} cy={cy}
+            <circle key={`${vi}-${t.id}`} cx={cx} cy={cy}
               r={isHov ? DOT_R + 2.5 : DOT_R}
               fill={t.color}
               opacity={isDim ? 0.12 : isHov ? 1 : 0.72}
               stroke={isHov ? "#fff" : "none"} strokeWidth="1.5"
+              role="button"
+              tabIndex={0}
+              aria-label={t.name}
               style={{ cursor: "pointer", transition: "all 0.15s" }}
               onMouseEnter={() => setHovered(t.id)}
-              onMouseLeave={() => setHovered(null)} />
+              onMouseLeave={() => setHovered(null)}
+              onFocus={() => setHovered(t.id)}
+              onBlur={() => setHovered(null)}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setHovered(t.id); }} />
           );
         })
       )}
@@ -306,8 +312,14 @@ function Card({ t, hovered, setHovered }) {
   const isDim = hovered !== null && !isHov;
   return (
     <div
+      role="button"
+      tabIndex={0}
+      aria-label={t.name}
       onMouseEnter={() => setHovered(t.id)}
       onMouseLeave={() => setHovered(null)}
+      onFocus={() => setHovered(t.id)}
+      onBlur={() => setHovered(null)}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setHovered(t.id); }}
       style={{
         background: isHov ? "#111827" : "#0D1520",
         border: `1px solid ${isHov ? t.color : "#1F2937"}`,
@@ -348,14 +360,6 @@ export default function App() {
   return (
     <div style={{ background: "#080C14", minHeight: "100vh", color: "#E8E4D8",
       fontFamily: "'Noto Sans JP', sans-serif", padding: "24px 16px 40px" }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
-        *,body{margin:0;padding:0;box-sizing:border-box}
-        ::-webkit-scrollbar{width:4px}
-        ::-webkit-scrollbar-track{background:#0D1520}
-        ::-webkit-scrollbar-thumb{background:#1F2937;border-radius:4px}
-      `}</style>
-
       <div style={{ textAlign: "center", marginBottom: "20px" }}>
         <h1 style={{ fontFamily: "Cormorant Garamond, serif", fontWeight: 400,
           fontSize: "clamp(22px, 5vw, 36px)", letterSpacing: "0.1em", margin: "0 0 4px" }}>
