@@ -8,5 +8,5 @@
 
 | 項目 | 値 |
 |---|---|
-| Build command | `npm run build` |
+| Build command | `bun run build` |
 | Output directory | `dist` |
