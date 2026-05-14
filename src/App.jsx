@@ -178,9 +178,10 @@ const W = 560, H = 500;
 const CX = W / 2, CY = H * 0.5;
 const R = 160;
 const toRad = (d) => (d * Math.PI) / 180;
+// 上→左→右の順（反時計回り）
 const vertices = [0, 1, 2].map((i) => ({
-  x: CX + R * Math.cos(toRad(-90 + 120 * i)),
-  y: CY + R * Math.sin(toRad(-90 + 120 * i)),
+  x: CX + R * Math.cos(toRad(-90 - 120 * i)),
+  y: CY + R * Math.sin(toRad(-90 - 120 * i)),
 }));
 const centroid = {
   x: vertices.reduce((s, v) => s + v.x, 0) / 3,
@@ -238,8 +239,8 @@ function HoverChip({ vi, t }) {
   );
 }
 
-function TriangleViz({ trilemmas, hovered, setHovered }) {
-  const hovT = trilemmas.find((t) => t.id === hovered) || null;
+function TriangleViz({ trilemmas, activeId, selectedId, setHovered, onSelect }) {
+  const activeT = trilemmas.find((t) => t.id === activeId) || null;
   return (
     <svg viewBox={`0 0 ${W} ${H}`}
       style={{ width: "100%", maxWidth: 560, overflow: "visible", display: "block" }}>
@@ -269,36 +270,44 @@ function TriangleViz({ trilemmas, hovered, setHovered }) {
       {[0, 1, 2].map((vi) =>
         trilemmas.map((t, ti) => {
           const { cx, cy } = getDotPos(vi, ti);
-          const isHov = hovered === t.id;
-          const isDim = hovered !== null && !isHov;
+          const isActive = activeId === t.id;
+          const isSelected = selectedId === t.id;
+          const isDim = activeId !== null && !isActive;
           return (
             <g key={`${vi}-${t.id}`}
               role="button"
               tabIndex={0}
               aria-label={t.name}
+              aria-pressed={isSelected}
               onMouseEnter={() => setHovered(t.id)}
               onMouseLeave={() => setHovered(null)}
               onFocus={() => setHovered(t.id)}
               onBlur={() => setHovered(null)}
+              onClick={() => onSelect(t.id)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
-                  setHovered(hovered === t.id ? null : t.id);
+                  onSelect(t.id);
                 }
               }}>
               <circle cx={cx} cy={cy} r={DOT_HIT_R} fill="transparent" />
+              {isSelected && !isActive && (
+                <circle cx={cx} cy={cy} r={DOT_R + 4}
+                  fill="none" stroke={t.color} strokeWidth="1" opacity={0.45}
+                  style={{ transition: "all 0.15s" }} />
+              )}
               <circle cx={cx} cy={cy}
-                r={isHov ? DOT_R + 2.5 : DOT_R}
+                r={isActive ? DOT_R + 2.5 : DOT_R}
                 fill={t.color}
-                opacity={isDim ? 0.12 : isHov ? 1 : 0.72}
-                stroke={isHov ? "#fff" : "none"} strokeWidth="1.5"
+                opacity={isDim ? 0.12 : isActive ? 1 : 0.72}
+                stroke={isActive ? "#fff" : "none"} strokeWidth="1.5"
                 style={{ cursor: "pointer", transition: "all 0.15s" }} />
             </g>
           );
         })
       )}
 
-      {hovT && [0, 1, 2].map((vi) => <HoverChip key={vi} vi={vi} t={hovT} />)}
+      {activeT && [0, 1, 2].map((vi) => <HoverChip key={vi} vi={vi} t={activeT} />)}
 
       {vertices.map((v, i) => (
         <circle key={i} cx={v.x} cy={v.y} r="5"
@@ -316,27 +325,30 @@ function TriangleViz({ trilemmas, hovered, setHovered }) {
   );
 }
 
-function Card({ t, hovered, setHovered }) {
-  const isHov = hovered === t.id;
-  const isDim = hovered !== null && !isHov;
+function Card({ t, activeId, selectedId, setHovered, onSelect }) {
+  const isActive = activeId === t.id;
+  const isSelected = selectedId === t.id;
+  const isDim = activeId !== null && !isActive;
   return (
     <div
       role="button"
       tabIndex={0}
       aria-label={t.name}
+      aria-pressed={isSelected}
       onMouseEnter={() => setHovered(t.id)}
       onMouseLeave={() => setHovered(null)}
       onFocus={() => setHovered(t.id)}
       onBlur={() => setHovered(null)}
+      onClick={() => onSelect(t.id)}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          setHovered(hovered === t.id ? null : t.id);
+          onSelect(t.id);
         }
       }}
       style={{
-        background: isHov ? "#111827" : "#0D1520",
-        border: `1px solid ${isHov ? t.color : "#1F2937"}`,
+        background: isActive ? "#111827" : "#0D1520",
+        border: `1px solid ${isActive ? t.color : isSelected ? t.color + "55" : "#1F2937"}`,
         borderLeft: `4px solid ${t.color}`,
         borderRadius: "8px", padding: "10px 14px",
         cursor: "pointer", transition: "all 0.15s",
@@ -356,7 +368,7 @@ function Card({ t, hovered, setHovered }) {
           }}>{el}</span>
         ))}
       </div>
-      {isHov && (
+      {isActive && (
         <p style={{ color: "#9CA3AF", fontSize: "11px", margin: "7px 0 0",
           fontFamily: "'Noto Sans JP', sans-serif", lineHeight: 1.6 }}>
           {t.desc}
@@ -369,7 +381,20 @@ function Card({ t, hovered, setHovered }) {
 export default function App() {
   const [domain, setDomain] = useState("all");
   const [hovered, setHovered] = useState(null);
-  const filtered = domain === "all" ? TRILEMMAS : TRILEMMAS.filter(t => t.domain === domain);
+  const [selected, setSelected] = useState(null);
+
+  const activeId = hovered ?? selected;
+  const filteredTrilemmas = domain === "all" ? TRILEMMAS : TRILEMMAS.filter(t => t.domain === domain);
+
+  const handleDomainChange = (id) => {
+    setDomain(id);
+    setHovered(null);
+    setSelected(null);
+  };
+
+  const handleSelect = (id) => {
+    setSelected(prev => prev === id ? null : id);
+  };
 
   return (
     <div style={{ background: "#080C14", minHeight: "100vh", color: "#E8E4D8",
@@ -392,7 +417,7 @@ export default function App() {
           const cnt = d.id === "all" ? TRILEMMAS.length
             : TRILEMMAS.filter(t => t.domain === d.id).length;
           return (
-            <button key={d.id} onClick={() => { setDomain(d.id); setHovered(null); }}
+            <button key={d.id} onClick={() => handleDomainChange(d.id)}
               style={{
                 background: active ? "#1E3A5F" : "#0D1520",
                 border: `1px solid ${active ? "#3B82F6" : "#1F2937"}`,
@@ -410,26 +435,38 @@ export default function App() {
         })}
       </div>
 
+      <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
       <p style={{ textAlign: "center", color: "#1E3050", fontSize: "11px",
         margin: "0 0 16px", letterSpacing: "0.08em" }}>
-        ● ドットまたはカードにホバー → 頂点ラベル表示
+        ● ドットまたはカードをホバー・クリック → 詳細表示（クリックで固定）
       </p>
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: "24px",
-        justifyContent: "center", alignItems: "flex-start",
-        maxWidth: "1100px", margin: "0 auto" }}>
+        justifyContent: "center", alignItems: "flex-start" }}>
 
         <div style={{ flex: "0 0 auto", width: "min(100%, 520px)" }}>
-          <TriangleViz trilemmas={filtered} hovered={hovered} setHovered={setHovered} />
+          <TriangleViz
+            trilemmas={filteredTrilemmas}
+            activeId={activeId}
+            selectedId={selected}
+            setHovered={setHovered}
+            onSelect={handleSelect}
+          />
         </div>
 
         <div style={{ flex: "1 1 280px", maxWidth: "460px",
           display: "flex", flexDirection: "column", gap: "8px",
-          maxHeight: "580px", overflowY: "auto", paddingRight: "4px" }}>
-          {filtered.map((t) => (
-            <Card key={t.id} t={t} hovered={hovered} setHovered={setHovered} />
+          paddingRight: "4px" }}>
+          {filteredTrilemmas.map((t) => (
+            <Card key={t.id} t={t}
+              activeId={activeId}
+              selectedId={selected}
+              setHovered={setHovered}
+              onSelect={handleSelect}
+            />
           ))}
         </div>
+      </div>
       </div>
     </div>
   );
