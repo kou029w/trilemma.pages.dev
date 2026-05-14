@@ -118,10 +118,10 @@ const TRILEMMAS = [
   {
     id: "community", domain: "society",
     name: "オンラインコミュニティ", nameEn: "Online Community Trilemma",
-    author: "Community Research", color: "#F87171",
-    elements: ["人", "情報", "規模"],
-    subelements: ["People", "Information", "Scale"],
-    desc: "オンラインコミュニティは質・量・人の全てを同時に維持できない",
+    author: "TeBlunthuis et al. (B.M.Hill), 2022", color: "#F87171",
+    elements: ["気の合う仲間", "特定の情報", "大きなオーディエンス"],
+    subelements: ["Similar Others", "Specific Information", "Large Audience"],
+    desc: "オンラインコミュニティは「気の合う仲間との交流」「特定の情報と議論」「可能な限り大きなオーディエンスからの注目」の3つを同時には提供できない",
   },
   {
     id: "zionism", domain: "society",
