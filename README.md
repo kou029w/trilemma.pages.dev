@@ -5,6 +5,7 @@
 ## デプロイ
 
 ```sh
+bun install
 bun run build
 bunx wrangler pages deploy
 ```
