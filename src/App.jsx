@@ -271,20 +271,27 @@ function TriangleViz({ trilemmas, hovered, setHovered }) {
           const isHov = hovered === t.id;
           const isDim = hovered !== null && !isHov;
           return (
-            <circle key={`${vi}-${t.id}`} cx={cx} cy={cy}
-              r={isHov ? DOT_R + 2.5 : DOT_R}
-              fill={t.color}
-              opacity={isDim ? 0.12 : isHov ? 1 : 0.72}
-              stroke={isHov ? "#fff" : "none"} strokeWidth="1.5"
+            <g key={`${vi}-${t.id}`}
               role="button"
               tabIndex={0}
               aria-label={t.name}
-              style={{ cursor: "pointer", transition: "all 0.15s" }}
               onMouseEnter={() => setHovered(t.id)}
               onMouseLeave={() => setHovered(null)}
               onFocus={() => setHovered(t.id)}
               onBlur={() => setHovered(null)}
-              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setHovered(t.id); }} />
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setHovered(hovered === t.id ? null : t.id);
+                }
+              }}>
+              <circle cx={cx} cy={cy}
+                r={isHov ? DOT_R + 2.5 : DOT_R}
+                fill={t.color}
+                opacity={isDim ? 0.12 : isHov ? 1 : 0.72}
+                stroke={isHov ? "#fff" : "none"} strokeWidth="1.5"
+                style={{ cursor: "pointer", transition: "all 0.15s" }} />
+            </g>
           );
         })
       )}
@@ -319,7 +326,12 @@ function Card({ t, hovered, setHovered }) {
       onMouseLeave={() => setHovered(null)}
       onFocus={() => setHovered(t.id)}
       onBlur={() => setHovered(null)}
-      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setHovered(t.id); }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          setHovered(hovered === t.id ? null : t.id);
+        }
+      }}
       style={{
         background: isHov ? "#111827" : "#0D1520",
         border: `1px solid ${isHov ? t.color : "#1F2937"}`,
