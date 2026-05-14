@@ -192,7 +192,7 @@ const outDir = vertices.map((v) => {
   return { dx: dx / len, dy: dy / len };
 });
 
-const DOT_R = 6, DOT_SPACING = 16, COLS = 5;
+const DOT_R = 6, DOT_HIT_R = DOT_R + 5, DOT_SPACING = 16, COLS = 5;
 
 function getDotPos(vi, idx) {
   const col = idx % COLS;
@@ -285,7 +285,7 @@ function TriangleViz({ trilemmas, hovered, setHovered }) {
                   setHovered(hovered === t.id ? null : t.id);
                 }
               }}>
-              <circle cx={cx} cy={cy} r={DOT_R + 5} fill="transparent" />
+              <circle cx={cx} cy={cy} r={DOT_HIT_R} fill="transparent" />
               <circle cx={cx} cy={cy}
                 r={isHov ? DOT_R + 2.5 : DOT_R}
                 fill={t.color}
