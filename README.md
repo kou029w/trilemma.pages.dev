@@ -4,9 +4,9 @@
 
 ## デプロイ
 
-[Cloudflare Pages](https://pages.cloudflare.com/) にリポジトリを接続し、以下を設定する。
+```sh
+bun run build
+bunx wrangler pages deploy
+```
 
-| 項目 | 値 |
-|---|---|
-| Build command | `bun run build` |
-| Output directory | `dist` |
+Cloudflare ダッシュボードからリポジトリを接続する場合は Build command を `bun run build`、Output directory を `dist` に設定する。
