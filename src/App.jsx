@@ -285,7 +285,7 @@ function TriangleViz({ trilemmas, hovered, setHovered }) {
                   setHovered(hovered === t.id ? null : t.id);
                 }
               }}>
-              <circle cx={cx} cy={cy} r={DOT_R + 4} fill="transparent" />
+              <circle cx={cx} cy={cy} r={DOT_R + 5} fill="transparent" />
               <circle cx={cx} cy={cy}
                 r={isHov ? DOT_R + 2.5 : DOT_R}
                 fill={t.color}
