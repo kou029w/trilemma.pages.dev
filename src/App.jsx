@@ -71,8 +71,8 @@ const TRILEMMAS = [
     id: "holmstrom", domain: "economics",
     name: "Holmströmの定理", nameEn: "Holmström's Theorem",
     author: "Bengt Holmström, 1982", color: "#059669",
-    elements: ["ナッシュ均衡", "均衡予算", "パレート最適"],
-    subelements: ["Nash Equilibrium", "Budget Balance", "Pareto Optimal"],
+    elements: ["パレート最適", "均衡予算", "ナッシュ均衡"],
+    subelements: ["Pareto Optimal", "Budget Balance", "Nash Equilibrium"],
     desc: "エージェント問題：3条件を同時に満たすインセンティブ設計は存在しない",
   },
   {
@@ -167,8 +167,8 @@ const TRILEMMAS = [
     id: "environment", domain: "environment",
     name: "環境問題のトリレンマ", nameEn: "Environmental Trilemma",
     author: "環境経済学", color: "#4ADE80",
-    elements: ["経済発展", "エネルギー確保", "環境保全"],
-    subelements: ["Economic Growth", "Energy Security", "Environmental Protection"],
+    elements: ["環境保全", "エネルギー確保", "経済発展"],
+    subelements: ["Environmental Protection", "Energy Security", "Economic Growth"],
     desc: "経済成長・エネルギー・環境の3つを同時に最大化することはできない",
   },
 ];
